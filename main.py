@@ -18,11 +18,16 @@ import datetime
 import regex as re
 from datetime import datetime, timedelta
 
+
 def get_data(tweet):
     data = {
         'id': tweet['id'],
         'created_at': tweet['created_at'],
-        'text': tweet['text']
+        'text': tweet['text'],
+        'retweet_count': tweet['public_metrics']['retweet_count'],
+        'reply_count': tweet['public_metrics']['reply_count'],
+        'like_count': tweet['public_metrics']['like_count'],
+        'quote_count': tweet['public_metrics']['quote_count']
     }
     return data
 
@@ -37,10 +42,10 @@ user = re.compile(r"(?i)@[a-z0-9_]+")
 endpoint = 'https://api.twitter.com/2/tweets/search/recent'  # 'https://api.twitter.com/2/tweets/search/all'
 headers = {'authorization': f'Bearer {BEARER_TOKEN}'}
 params = {
-    'query': '(tesla OR tsla OR elon musk) (lang:en)',
+    'query': '(tesla OR tsla OR elon musk) (lang:en) -is:retweet',
     'max_results': '100',
-    'tweet.fields': 'created_at,lang'
-        }
+    'tweet.fields': 'created_at,lang,public_metrics'
+}
 
 dtformat = '%Y-%m-%dT%H:%M:%SZ'  # the date format string required by twitter
 
@@ -70,7 +75,9 @@ while True:
     # iteratively append our tweet data to our dataframe
     for tweet in response.json()['data']:
         row = get_data(tweet)  # we defined this function earlier
-        df = df.append(row, ignore_index=True)
+        if row['like_count'] != 0:
+            df = df.append(row, ignore_index=True)
+
 
 #---------------------------------------------- Sentiment Model ------------------------------------------------------
 
