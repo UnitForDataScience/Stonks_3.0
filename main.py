@@ -14,10 +14,9 @@
 
 import requests
 import pandas as pd
-import datetime
+import time
 import regex as re
 from datetime import datetime, timedelta
-
 
 
 def get_data(tweet):
@@ -27,8 +26,8 @@ def get_data(tweet):
         'text': tweet['text'],
         'retweet_count': tweet['public_metrics']['retweet_count'],
         'reply_count': tweet['public_metrics']['reply_count'],
-        'like_count': tweet['public_metrics']['like_count'],
-        'quote_count': tweet['public_metrics']['quote_count']
+        'like_count': tweet['public_metrics']['like_count']#,
+#        'quote_count': tweet['public_metrics']['quote_count']
     }
     return data
 
@@ -65,20 +64,21 @@ while True:
     if datetime.strptime(now, dtformat) < last_week:
         # if we have reached 6 days ago, break the loop
         break
-    pre60 = time_travel(now, 60)  # get 60 minutes before 'now'
+    pre60 = time_travel(now, 30)  # get 60 minutes before 'now'
     # assign from and to datetime parameters for the API
     params['start_time'] = pre60
     params['end_time'] = now
     response = requests.get(endpoint,
                             params=params,
                             headers=headers)  # send the request
+    time.sleep(1)
     now = pre60  # move the window 60 minutes earlier
     # iteratively append our tweet data to our dataframe
     for tweet in response.json()['data']:
         row = get_data(tweet)  # we defined this function earlier
         if row['like_count'] != 0:
             df = df.append(row, ignore_index=True)
-
+#row['reply_count'] >=1 and row['like_count'] >=1 and row['retweet_count'] >=0
 
 #---------------------------------------------- Sentiment Model ------------------------------------------------------
 
