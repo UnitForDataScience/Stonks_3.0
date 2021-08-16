@@ -24,7 +24,7 @@ def get_data(tweet):
     data = {
         'id': tweet['id'],
         'created_at': tweet['created_at'],
-        'text': tweet['text'],
+        'text': tweet['full_text'],
 #        'retweet_count': tweet['public_metrics']['retweet_count'],
 #        'like_count': tweet['public_metrics']['like_count'],
 #        'reply_count': tweet['public_metrics']['reply_count']
@@ -43,10 +43,11 @@ user = re.compile(r"(?i)@[a-z0-9_]+")
 endpoint = 'https://api.twitter.com/1.1/search/tweets.json' #'https://api.twitter.com/2/tweets/search/recent'  # 'https://api.twitter.com/2/tweets/search/all'
 headers = {'authorization': f'Bearer {BEARER_TOKEN}'}
 params = {
-    'q': '(tesla OR tsla OR elon musk) (lang:en) -is:retweet',
+    'q': '((tesla OR tsla OR elon musk) and -spacex) (lang:en)',# -is:retweet',
     'count': '100',
 #    'tweet.fields': 'created_at,lang,public_metrics',
-    'result_type': 'popular'
+    'result_type': 'popular',
+    'tweet_mode': 'extended'
         }
 
 dtformat = '%a %b %d %H:%M:%S +0000 %Y'#'%Y-%m-%dT%H:%M:%SZ'  # the date format string required by twitter
@@ -136,8 +137,8 @@ import yfinance as yf
 
 tsla = yf.Ticker("TSLA")
 tsla_stock = tsla.history(
-    start=df['Date'].min(),
-    end=df['Date'].max(),
+    start=(datetime.strptime(df['Date'].min(),'%Y-%m-%d')).strftime('%Y-%m-%d'),
+    end=(datetime.strptime(df['Date'].max(),'%Y-%m-%d') + timedelta(days = 2)).strftime('%Y-%m-%d'),
     interval='1d'   #'60m'
         ).reset_index()
 tsla_stock
