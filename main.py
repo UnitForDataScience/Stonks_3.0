@@ -43,7 +43,7 @@ user = re.compile(r"(?i)@[a-z0-9_]+")
 endpoint = 'https://api.twitter.com/1.1/search/tweets.json' #'https://api.twitter.com/2/tweets/search/recent'  # 'https://api.twitter.com/2/tweets/search/all'
 headers = {'authorization': f'Bearer {BEARER_TOKEN}'}
 params = {
-    'q': '((tesla OR tsla OR elon musk) and -spacex) (lang:en)',# -is:retweet',
+    'q': '((tesla OR tsla OR elon musk) AND -spacex) (lang:en)',# -is:retweet',
     'count': '100',
 #    'tweet.fields': 'created_at,lang,public_metrics',
     'result_type': 'popular',
