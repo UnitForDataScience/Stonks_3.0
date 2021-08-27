@@ -135,13 +135,13 @@ df
 
 import yfinance as yf
 
-tsla = yf.Ticker("TSLA")
-tsla_stock = tsla.history(
+#tsla = yf.Ticker("TSLA")
+tsla = yf.download( "TSLA",
     start=(datetime.strptime(df['Date'].min(),'%Y-%m-%d')).strftime('%Y-%m-%d'),
     end=(datetime.strptime(df['Date'].max(),'%Y-%m-%d') + timedelta(days = 2)).strftime('%Y-%m-%d'),
     interval='1d'   #'60m'
-        ).reset_index()
-tsla_stock
+        )#.reset_index()
+tsla_stock = tsla.pct_change().reset_index()
 
 converted = []
 for time in tsla_stock['Date']:
