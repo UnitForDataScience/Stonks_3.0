@@ -19,7 +19,6 @@ import regex as re
 from datetime import datetime, timedelta
 
 
-
 def get_data(tweet):
     data = {
         'id': tweet['id'],
